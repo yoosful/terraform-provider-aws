@@ -167,14 +167,14 @@ func resourceEnvironmentEC2Read(d *schema.ResourceData, meta interface{}) error 
 		EnvironmentIds: []*string{aws.String(d.Id())},
 	})
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, cloud9.ErrCodeNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, cloud9.ErrCodeNotFoundException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] Cloud9 Environment EC2 (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
 		}
 		return err
 	}
-	if len(out.Environments) == 0 {
+	if len(out.Environments) == 0 && !d.IsNewResource() {
 		log.Printf("[WARN] Cloud9 Environment EC2 (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

@@ -495,7 +495,7 @@ func resourceInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
-	instanceId := *instance.InstanceId
+	instanceId := aws.StringValue(instance.InstanceId)
 
 	d.SetId(instanceId)
 	d.Set("agent_version", instance.AgentVersion)

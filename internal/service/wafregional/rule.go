@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-aws/internal/conns"
+	tfwaf "github.com/hashicorp/terraform-provider-aws/internal/service/waf"
 	tftags "github.com/hashicorp/terraform-provider-aws/internal/tags"
 	"github.com/hashicorp/terraform-provider-aws/internal/verify"
 )
@@ -154,7 +155,7 @@ func resourceRuleRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("error setting tags_all: %w", err)
 	}
 
-	d.Set("predicate", flattenWafPredicates(resp.Rule.Predicates))
+	d.Set("predicate", tfwaf.FlattenRulePredicates(resp.Rule.Predicates))
 	d.Set("name", resp.Rule.Name)
 	d.Set("metric_name", resp.Rule.MetricName)
 
@@ -223,7 +224,7 @@ func updateWafRegionalRuleResource(id string, oldP, newP []interface{}, meta int
 		req := &waf.UpdateRuleInput{
 			ChangeToken: token,
 			RuleId:      aws.String(id),
-			Updates:     diffWafRulePredicates(oldP, newP),
+			Updates:     tfwaf.DiffRulePredicates(oldP, newP),
 		}
 
 		return conn.UpdateRule(req)
@@ -234,16 +235,4 @@ func updateWafRegionalRuleResource(id string, oldP, newP []interface{}, meta int
 	}
 
 	return nil
-}
-
-func flattenWafPredicates(ts []*waf.Predicate) []interface{} {
-	out := make([]interface{}, len(ts))
-	for i, p := range ts {
-		m := make(map[string]interface{})
-		m["negated"] = aws.BoolValue(p.Negated)
-		m["type"] = aws.StringValue(p.Type)
-		m["data_id"] = aws.StringValue(p.DataId)
-		out[i] = m
-	}
-	return out
 }

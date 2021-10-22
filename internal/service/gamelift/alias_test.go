@@ -147,9 +147,9 @@ func TestAccGameLiftAlias_fleetRouting(t *testing.T) {
 	}
 
 	loc := g.Location
-	bucketName := *loc.Bucket
-	roleArn := *loc.RoleArn
-	key := *loc.Key
+	bucketName := aws.StringValue(loc.Bucket)
+	roleArn := aws.StringValue(loc.RoleArn)
+	key := aws.StringValue(loc.Key)
 
 	launchPath := g.LaunchPath
 	params := g.Parameters(33435)

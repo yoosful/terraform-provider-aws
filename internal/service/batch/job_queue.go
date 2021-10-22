@@ -115,7 +115,7 @@ func resourceJobQueueRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	if jq == nil {
+	if jq == nil && !d.IsNewResource() {
 		log.Printf("[WARN] Batch Job Queue (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

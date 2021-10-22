@@ -105,7 +105,7 @@ func resourceSecurityGroupRead(d *schema.ResourceData, meta interface{}) error {
 	var group *elasticache.CacheSecurityGroup
 	for _, g := range res.CacheSecurityGroups {
 		log.Printf("[DEBUG] CacheSecurityGroupName: %v, id: %v", g.CacheSecurityGroupName, d.Id())
-		if *g.CacheSecurityGroupName == d.Id() {
+		if aws.StringValue(g.CacheSecurityGroupName) == d.Id() {
 			group = g
 		}
 	}
@@ -118,7 +118,7 @@ func resourceSecurityGroupRead(d *schema.ResourceData, meta interface{}) error {
 
 	sgNames := make([]string, 0, len(group.EC2SecurityGroups))
 	for _, sg := range group.EC2SecurityGroups {
-		sgNames = append(sgNames, *sg.EC2SecurityGroupName)
+		sgNames = append(sgNames, aws.StringValue(sg.EC2SecurityGroupName))
 	}
 	d.Set("security_group_names", sgNames)
 

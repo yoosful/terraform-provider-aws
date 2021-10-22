@@ -78,7 +78,7 @@ func resourceGroupRead(d *schema.ResourceData, meta interface{}) error {
 	group, err := conn.GetGroup(input)
 
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, xray.ErrCodeInvalidRequestException, "Group not found") {
+		if tfawserr.ErrMessageContains(err, xray.ErrCodeInvalidRequestException, "Group not found") && !d.IsNewResource() {
 			log.Printf("[WARN] XRay Group (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil

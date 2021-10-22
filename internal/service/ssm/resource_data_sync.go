@@ -142,28 +142,28 @@ func FindResourceDataSyncItem(conn *ssm.SSM, name string) (*ssm.ResourceDataSync
 			return nil, err
 		}
 		for _, v := range resp.ResourceDataSyncItems {
-			if *v.SyncName == name {
+			if aws.StringValue(v.SyncName) == name {
 				return v, nil
 			}
 		}
 		if resp.NextToken == nil {
 			break
 		}
-		nextToken = *resp.NextToken
+		nextToken = aws.StringValue(resp.NextToken)
 	}
 	return nil, nil
 }
 
 func flattenSsmResourceDataSyncS3Destination(dest *ssm.ResourceDataSyncS3Destination) []interface{} {
 	result := make(map[string]interface{})
-	result["bucket_name"] = *dest.BucketName
-	result["region"] = *dest.Region
-	result["sync_format"] = *dest.SyncFormat
+	result["bucket_name"] = aws.StringValue(dest.BucketName)
+	result["region"] = aws.StringValue(dest.Region)
+	result["sync_format"] = aws.StringValue(dest.SyncFormat)
 	if dest.AWSKMSKeyARN != nil {
-		result["kms_key_arn"] = *dest.AWSKMSKeyARN
+		result["kms_key_arn"] = aws.StringValue(dest.AWSKMSKeyARN)
 	}
 	if dest.Prefix != nil {
-		result["prefix"] = *dest.Prefix
+		result["prefix"] = aws.StringValue(dest.Prefix)
 	}
 	return []interface{}{result}
 }

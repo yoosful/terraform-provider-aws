@@ -131,7 +131,7 @@ func resourceCloudFormationStackRead(d *schema.ResourceData, meta interface{}) e
 
 	stack, err := tfcloudformation.FindStackByID(cfConn, d.Id())
 
-	if tfresource.NotFound(err) {
+	if tfresource.NotFound(err) && !d.IsNewResource() {
 		log.Printf("[WARN] Serverless Application Repository CloudFormation Stack (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
@@ -352,7 +352,7 @@ func flattenServerlessRepositoryStackCapabilities(stackCapabilities []*string, a
 func flattenCloudFormationOutputs(cfOutputs []*cloudformation.Output) map[string]string {
 	outputs := make(map[string]string, len(cfOutputs))
 	for _, o := range cfOutputs {
-		outputs[*o.OutputKey] = *o.OutputValue
+		outputs[aws.StringValue(o.OutputKey)] = aws.StringValue(o.OutputValue)
 	}
 	return outputs
 }

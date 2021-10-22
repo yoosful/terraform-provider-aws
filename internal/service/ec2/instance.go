@@ -1703,7 +1703,7 @@ func resourceInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 	if d.HasChange("capacity_reservation_specification") && !d.IsNewResource() {
 		if v, ok := d.GetOk("capacity_reservation_specification"); ok {
 			capacityReservationSpecification := expandCapacityReservationSpecification(v.([]interface{}))
-			if *capacityReservationSpecification != (ec2.CapacityReservationSpecification{}) && capacityReservationSpecification != nil {
+			if *capacityReservationSpecification != (ec2.CapacityReservationSpecification{}) && capacityReservationSpecification != nil { // nosemgrep: prefer-aws-go-sdk-pointer-conversion-conditional
 				log.Printf("[DEBUG] Modifying capacity reservation for instance %s", d.Id())
 				_, err := conn.ModifyInstanceCapacityReservationAttributes(&ec2.ModifyInstanceCapacityReservationAttributesInput{
 					CapacityReservationSpecification: capacityReservationSpecification,
@@ -3203,7 +3203,7 @@ func getLaunchTemplateSpecification(conn *ec2.EC2, id string) (string, string, s
 		return "", "", "", err
 	}
 
-	name := *dlt.LaunchTemplates[0].LaunchTemplateName
+	name := aws.StringValue(dlt.LaunchTemplates[0].LaunchTemplateName)
 	defaultVersion := strconv.FormatInt(*dlt.LaunchTemplates[0].DefaultVersionNumber, 10)
 	latestVersion := strconv.FormatInt(*dlt.LaunchTemplates[0].LatestVersionNumber, 10)
 

@@ -434,7 +434,7 @@ func testAccCheckAccessPointHasPolicy(n string, fn func() string) resource.TestC
 			return err
 		}
 
-		actualPolicyText := *resp.Policy
+		actualPolicyText := aws.StringValue(resp.Policy)
 		expectedPolicyText := fn()
 
 		equivalent, err := awspolicy.PoliciesAreEquivalent(actualPolicyText, expectedPolicyText)

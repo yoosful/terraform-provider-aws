@@ -346,7 +346,7 @@ func resourcePresetCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error creating Elastic Transcoder Preset: %s", err)
 	}
 
-	if resp.Warning != nil && *resp.Warning != "" {
+	if resp.Warning != nil && aws.StringValue(resp.Warning) != "" {
 		log.Printf("[WARN] Elastic Transcoder Preset: %s", *resp.Warning)
 	}
 
@@ -574,7 +574,7 @@ func resourcePresetRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, elastictranscoder.ErrCodeResourceNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, elastictranscoder.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 			d.SetId("")
 			return nil
 		}

@@ -93,7 +93,7 @@ func resourceConfigurationRead(d *schema.ResourceData, meta interface{}) error {
 
 	configurationOutput, err := conn.DescribeConfiguration(configurationInput)
 
-	if tfawserr.ErrMessageContains(err, kafka.ErrCodeBadRequestException, "Configuration ARN does not exist") {
+	if tfawserr.ErrMessageContains(err, kafka.ErrCodeBadRequestException, "Configuration ARN does not exist") && !d.IsNewResource() {
 		log.Printf("[WARN] MSK Configuration (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

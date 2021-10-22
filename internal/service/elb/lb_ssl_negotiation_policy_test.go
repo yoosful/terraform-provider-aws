@@ -188,7 +188,7 @@ func policyAttributesToMap(attributes *[]*elb.PolicyAttributeDescription) map[st
 	attrmap := make(map[string]string)
 
 	for _, attrdef := range *attributes {
-		attrmap[*attrdef.AttributeName] = *attrdef.AttributeValue
+		attrmap[aws.StringValue(attrdef.AttributeName)] = aws.StringValue(attrdef.AttributeValue)
 	}
 
 	return attrmap

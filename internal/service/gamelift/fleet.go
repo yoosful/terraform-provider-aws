@@ -555,8 +555,8 @@ func flattenGameliftResourceCreationLimitPolicy(policy *gamelift.ResourceCreatio
 	}
 
 	m := make(map[string]interface{})
-	m["new_game_sessions_per_creator"] = *policy.NewGameSessionsPerCreator
-	m["policy_period_in_minutes"] = *policy.PolicyPeriodInMinutes
+	m["new_game_sessions_per_creator"] = aws.Int64Value(policy.NewGameSessionsPerCreator)
+	m["policy_period_in_minutes"] = aws.Int64Value(policy.PolicyPeriodInMinutes)
 
 	return []interface{}{m}
 }
@@ -653,7 +653,7 @@ func isGameliftEventFailure(event *gamelift.Event) bool {
 		gamelift.EventCodeServerProcessTerminatedUnhealthy,
 	}
 	for _, fc := range failureCodes {
-		if *event.EventCode == fc {
+		if aws.StringValue(event.EventCode) == fc {
 			return true
 		}
 	}

@@ -242,8 +242,8 @@ func testAccCheckAliasExists(n string, mapping *lambda.AliasConfiguration) resou
 
 func testAccCheckAliasAttributes(mapping *lambda.AliasConfiguration) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		name := *mapping.Name
-		arn := *mapping.AliasArn
+		name := aws.StringValue(mapping.Name)
+		arn := aws.StringValue(mapping.AliasArn)
 		if arn == "" {
 			return fmt.Errorf("Could not read Lambda alias ARN")
 		}

@@ -80,7 +80,9 @@ func resourcePipelineRead(d *schema.ResourceData, meta interface{}) error {
 	ignoreTagsConfig := meta.(*conns.AWSClient).IgnoreTagsConfig
 
 	v, err := PipelineRetrieve(d.Id(), conn)
-	if tfawserr.ErrMessageContains(err, datapipeline.ErrCodePipelineNotFoundException, "") || tfawserr.ErrMessageContains(err, datapipeline.ErrCodePipelineDeletedException, "") || v == nil {
+	if (tfawserr.ErrMessageContains(err, datapipeline.ErrCodePipelineNotFoundException, "") ||
+		tfawserr.ErrMessageContains(err, datapipeline.ErrCodePipelineDeletedException, "") ||
+		v == nil) && !d.IsNewResource() {
 		log.Printf("[WARN] DataPipeline (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

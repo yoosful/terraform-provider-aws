@@ -525,7 +525,7 @@ func testAccCheckRoute53ZoneExistsWithProvider(n string, zone *route53.GetHosted
 			return fmt.Errorf("Hosted zone err: %v", err)
 		}
 
-		aws_comment := *resp.HostedZone.Config.Comment
+		aws_comment := aws.StringValue(resp.HostedZone.Config.Comment)
 		rs_comment := rs.Primary.Attributes["comment"]
 		if rs_comment != "" && rs_comment != aws_comment {
 			return fmt.Errorf("Hosted zone with comment '%s' found but does not match '%s'", aws_comment, rs_comment)
@@ -534,7 +534,7 @@ func testAccCheckRoute53ZoneExistsWithProvider(n string, zone *route53.GetHosted
 		if !*resp.HostedZone.Config.PrivateZone {
 			sorted_ns := make([]string, len(resp.DelegationSet.NameServers))
 			for i, ns := range resp.DelegationSet.NameServers {
-				sorted_ns[i] = *ns
+				sorted_ns[i] = aws.StringValue(ns)
 			}
 			sort.Strings(sorted_ns)
 			for idx, ns := range sorted_ns {

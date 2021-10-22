@@ -840,7 +840,7 @@ func expandEcsVolumesDockerVolume(configList []interface{}) *ecs.DockerVolumeCon
 
 	if v, ok := config["autoprovision"]; ok && v != "" {
 		scope := dockerVol.Scope
-		if scope == nil || *scope != ecs.ScopeTask || v.(bool) {
+		if aws.StringValue(scope) != ecs.ScopeTask || v.(bool) {
 			dockerVol.Autoprovision = aws.Bool(v.(bool))
 		}
 	}

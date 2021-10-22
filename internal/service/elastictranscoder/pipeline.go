@@ -304,7 +304,7 @@ func flattenETNotifications(n *elastictranscoder.Notifications) []map[string]int
 
 	allEmpty := func(s ...*string) bool {
 		for _, s := range s {
-			if s != nil && *s != "" {
+			if s != nil && aws.StringValue(s) != "" {
 				return false
 			}
 		}
@@ -460,7 +460,7 @@ func resourcePipelineRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, elastictranscoder.ErrCodeResourceNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, elastictranscoder.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] No such resource found for Elastic Transcoder Pipeline (%s)", d.Id())
 			d.SetId("")
 			return nil

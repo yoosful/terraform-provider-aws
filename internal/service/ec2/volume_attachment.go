@@ -174,15 +174,16 @@ func resourceVolumeAttachmentRead(d *schema.ResourceData, meta interface{}) erro
 
 	vols, err := conn.DescribeVolumes(request)
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, "InvalidVolume.NotFound", "") {
+		if tfawserr.ErrMessageContains(err, "InvalidVolume.NotFound", "") && !d.IsNewResource() {
+			log.Printf("[WARN] Volume Attachment (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
 		}
 		return fmt.Errorf("Error reading EC2 volume %s for instance: %s: %#v", d.Get("volume_id").(string), d.Get("instance_id").(string), err)
 	}
 
-	if len(vols.Volumes) == 0 || aws.StringValue(vols.Volumes[0].State) == ec2.VolumeStateAvailable {
-		log.Printf("[DEBUG] Volume Attachment (%s) not found, removing from state", d.Id())
+	if len(vols.Volumes) == 0 || aws.StringValue(vols.Volumes[0].State) == ec2.VolumeStateAvailable && !d.IsNewResource() {
+		log.Printf("[WARN] Volume Attachment (%s) not found, removing from state", d.Id())
 		d.SetId("")
 	}
 

@@ -144,7 +144,7 @@ func resourceQueueRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	resp, err := conn.GetQueue(getOpts)
-	if tfawserr.ErrMessageContains(err, mediaconvert.ErrCodeNotFoundException, "") {
+	if tfawserr.ErrMessageContains(err, mediaconvert.ErrCodeNotFoundException, "") && !d.IsNewResource() {
 		log.Printf("[WARN] Media Convert Queue (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
@@ -206,13 +206,8 @@ func resourceQueueUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		_, err = conn.UpdateQueue(updateOpts)
-		if tfawserr.ErrMessageContains(err, mediaconvert.ErrCodeNotFoundException, "") {
-			log.Printf("[WARN] Media Convert Queue (%s) not found, removing from state", d.Id())
-			d.SetId("")
-			return nil
-		}
 		if err != nil {
-			return fmt.Errorf("Error updating Media Convert Queue: %s", err)
+			return fmt.Errorf("Error updating Media Convert Queue (%s): %s", d.Id(), err)
 		}
 	}
 

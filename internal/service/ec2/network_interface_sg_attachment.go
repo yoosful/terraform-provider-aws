@@ -171,7 +171,7 @@ func delSGFromENI(conn *ec2.EC2, sgID string, iface *ec2.NetworkInterface) error
 	old := iface.Groups
 	var new []*string
 	for _, v := range iface.Groups {
-		if *v.GroupId == sgID {
+		if aws.StringValue(v.GroupId) == sgID {
 			continue
 		}
 		new = append(new, v.GroupId)

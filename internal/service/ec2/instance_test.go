@@ -710,8 +710,7 @@ func TestAccEC2Instance_disableAPITermination(t *testing.T) {
 			if err != nil {
 				return err
 			}
-			got := *r.DisableApiTermination.Value
-			if got != expected {
+			if got := aws.BoolValue(r.DisableApiTermination.Value); got != expected {
 				return fmt.Errorf("expected: %t, got: %t", expected, got)
 			}
 			return nil

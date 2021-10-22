@@ -165,7 +165,7 @@ func resourceNotificationRuleRead(d *schema.ResourceData, meta interface{}) erro
 	})
 
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, codestarnotifications.ErrCodeResourceNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, codestarnotifications.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] codestar notification rule (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil

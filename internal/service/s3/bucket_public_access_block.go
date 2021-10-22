@@ -174,13 +174,13 @@ func resourceBucketPublicAccessBlockUpdate(d *schema.ResourceData, meta interfac
 	log.Printf("[DEBUG] Updating S3 bucket Public Access Block: %s", input)
 	_, err := conn.PutPublicAccessBlock(input)
 
-	if tfawserr.ErrCodeEquals(err, ErrCodeNoSuchPublicAccessBlockConfiguration) {
+	if tfawserr.ErrCodeEquals(err, ErrCodeNoSuchPublicAccessBlockConfiguration) && !d.IsNewResource() {
 		log.Printf("[WARN] S3 Bucket Public Access Block (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
 	}
 
-	if tfawserr.ErrCodeEquals(err, s3.ErrCodeNoSuchBucket) {
+	if tfawserr.ErrCodeEquals(err, s3.ErrCodeNoSuchBucket) && !d.IsNewResource() {
 		log.Printf("[WARN] S3 Bucket (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

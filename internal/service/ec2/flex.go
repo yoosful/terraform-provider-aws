@@ -36,7 +36,7 @@ func flattenAttributeValues(l []*ec2.AttributeValue) []string {
 func FlattenGroupIdentifiers(dtos []*ec2.GroupIdentifier) []string {
 	ids := make([]string, 0, len(dtos))
 	for _, v := range dtos {
-		group_id := *v.GroupId
+		group_id := aws.StringValue(v.GroupId)
 		ids = append(ids, group_id)
 	}
 	return ids
@@ -71,7 +71,7 @@ func expandIP6Addresses(ips []interface{}) []*ec2.InstanceIpv6Address {
 // to_port or from_port set to a non-zero value.
 func ExpandIPPerms(
 	group *ec2.SecurityGroup, configured []interface{}) ([]*ec2.IpPermission, error) {
-	vpc := group.VpcId != nil && *group.VpcId != ""
+	vpc := group.VpcId != nil && aws.StringValue(group.VpcId) != ""
 
 	perms := make([]*ec2.IpPermission, len(configured))
 	for i, mRaw := range configured {
@@ -87,7 +87,7 @@ func ExpandIPPerms(
 		// than '0'. Force the user to make a deliberate '0' port
 		// choice when specifying a "-1" protocol, and tell them about
 		// AWS's behavior in the error message.
-		if *perm.IpProtocol == "-1" && (*perm.FromPort != 0 || *perm.ToPort != 0) {
+		if aws.StringValue(perm.IpProtocol) == "-1" && (aws.Int64Value(perm.FromPort) != 0 || aws.Int64Value(perm.ToPort) != 0) {
 			return nil, fmt.Errorf(
 				"from_port (%d) and to_port (%d) must both be 0 to use the 'ALL' \"-1\" protocol!",
 				*perm.FromPort, *perm.ToPort)
@@ -102,9 +102,9 @@ func ExpandIPPerms(
 		}
 		if v, ok := m["self"]; ok && v.(bool) {
 			if vpc {
-				groups = append(groups, *group.GroupId)
+				groups = append(groups, aws.StringValue(group.GroupId))
 			} else {
-				groups = append(groups, *group.GroupName)
+				groups = append(groups, aws.StringValue(group.GroupName))
 			}
 		}
 
@@ -215,7 +215,7 @@ func flattenNetworkInterfaceIPv6Address(niia []*ec2.NetworkInterfaceIpv6Address)
 func FlattenNetworkInterfacesPrivateIPAddresses(dtos []*ec2.NetworkInterfacePrivateIpAddress) []string {
 	ips := make([]string, 0, len(dtos))
 	for _, v := range dtos {
-		ip := *v.PrivateIpAddress
+		ip := aws.StringValue(v.PrivateIpAddress)
 		ips = append(ips, ip)
 	}
 	return ips
@@ -241,12 +241,12 @@ func FlattenSecurityGroups(list []*ec2.UserIdGroupPair, ownerId *string) []*Grou
 	result := make([]*GroupIdentifier, 0, len(list))
 	for _, g := range list {
 		var userId *string
-		if g.UserId != nil && *g.UserId != "" && (ownerId == nil || *ownerId != *g.UserId) {
+		if g.UserId != nil && aws.StringValue(g.UserId) != "" && (ownerId == nil || aws.StringValue(ownerId) != aws.StringValue(g.UserId)) {
 			userId = g.UserId
 		}
 		// userid nil here for same vpc groups
 
-		vpc := g.GroupName == nil || *g.GroupName == ""
+		vpc := g.GroupName == nil || aws.StringValue(g.GroupName) == ""
 		var id *string
 		if vpc {
 			id = g.GroupId

@@ -138,12 +138,12 @@ func resourceRepositoryRead(d *schema.ResourceData, meta interface{}) error {
 
 	out, err := conn.GetRepository(input)
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, codecommit.ErrCodeRepositoryDoesNotExistException, "") {
+		if tfawserr.ErrMessageContains(err, codecommit.ErrCodeRepositoryDoesNotExistException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] CodeCommit Repository (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("Error reading CodeCommit Repository: %s", err.Error())
+			return fmt.Errorf("Error reading CodeCommit Repository (%s): %w", d.Id(), err)
 		}
 	}
 

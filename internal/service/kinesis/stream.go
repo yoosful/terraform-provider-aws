@@ -193,7 +193,7 @@ func resourceStreamRead(d *schema.ResourceData, meta interface{}) error {
 	state, err := readKinesisStreamState(conn, sn)
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
-			if awsErr.Code() == kinesis.ErrCodeResourceNotFoundException {
+			if awsErr.Code() == kinesis.ErrCodeResourceNotFoundException && !d.IsNewResource() {
 				d.SetId("")
 				return nil
 			}

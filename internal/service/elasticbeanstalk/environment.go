@@ -380,12 +380,12 @@ func resourceEnvironmentUpdate(d *schema.ResourceData, meta interface{}) error {
 						if r.ResourceName == nil {
 							continue
 						}
-						if *r.ResourceName != *a.ResourceName {
+						if aws.StringValue(r.ResourceName) != aws.StringValue(a.ResourceName) {
 							continue
 						}
 					}
-					if *r.Namespace == *a.Namespace && *r.OptionName == *a.OptionName {
-						log.Printf("[DEBUG] Updating Beanstalk setting (%s::%s) \"%s\" => \"%s\"", *a.Namespace, *a.OptionName, *r.Value, *a.Value)
+					if aws.StringValue(r.Namespace) == aws.StringValue(a.Namespace) && aws.StringValue(r.OptionName) == aws.StringValue(a.OptionName) {
+						log.Printf("[DEBUG] Updating Beanstalk setting (%s::%s) \"%s\" => \"%s\"", aws.StringValue(a.Namespace), aws.StringValue(a.OptionName), aws.StringValue(r.Value), aws.StringValue(a.Value))
 						update = true
 						break
 					}
@@ -528,7 +528,7 @@ func resourceEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
 
 	env := resp.Environments[0]
 
-	if *env.Status == "Terminated" {
+	if aws.StringValue(env.Status) == "Terminated" {
 		log.Printf("[DEBUG] Elastic Beanstalk environment %s was terminated", d.Id())
 
 		d.SetId("")
@@ -665,29 +665,30 @@ func fetchEnvironmentSettings(d *schema.ResourceData, meta interface{}) (*schema
 		m := map[string]interface{}{}
 
 		if optionSetting.Namespace != nil {
-			m["namespace"] = *optionSetting.Namespace
+			m["namespace"] = aws.StringValue(optionSetting.Namespace)
 		} else {
 			return nil, fmt.Errorf("Error reading environment settings: option setting with no namespace: %v", optionSetting)
 		}
 
 		if optionSetting.OptionName != nil {
-			m["name"] = *optionSetting.OptionName
+			m["name"] = aws.StringValue(optionSetting.OptionName)
 		} else {
 			return nil, fmt.Errorf("Error reading environment settings: option setting with no name: %v", optionSetting)
 		}
 
-		if *optionSetting.Namespace == "aws:autoscaling:scheduledaction" && optionSetting.ResourceName != nil {
-			m["resource"] = *optionSetting.ResourceName
+		if aws.StringValue(optionSetting.Namespace) == "aws:autoscaling:scheduledaction" && optionSetting.ResourceName != nil {
+			m["resource"] = aws.StringValue(optionSetting.ResourceName)
 		}
 
 		if optionSetting.Value != nil {
-			switch *optionSetting.OptionName {
+			value := aws.StringValue(optionSetting.Value)
+			switch aws.StringValue(optionSetting.OptionName) {
 			case "SecurityGroups":
-				m["value"] = dropGeneratedSecurityGroup(*optionSetting.Value, meta)
+				m["value"] = dropGeneratedSecurityGroup(value, meta)
 			case "Subnets", "ELBSubnets":
-				m["value"] = sortValues(*optionSetting.Value)
+				m["value"] = sortValues(value)
 			default:
-				m["value"] = *optionSetting.Value
+				m["value"] = value
 			}
 		}
 
@@ -951,7 +952,7 @@ func extractOptionSettings(s *schema.Set) []*elasticbeanstalk.ConfigurationOptio
 				OptionName: aws.String(setting.(map[string]interface{})["name"].(string)),
 				Value:      aws.String(setting.(map[string]interface{})["value"].(string)),
 			}
-			if *optionSetting.Namespace == "aws:autoscaling:scheduledaction" {
+			if aws.StringValue(optionSetting.Namespace) == "aws:autoscaling:scheduledaction" {
 				if v, ok := setting.(map[string]interface{})["resource"].(string); ok && v != "" {
 					optionSetting.ResourceName = aws.String(v)
 				}

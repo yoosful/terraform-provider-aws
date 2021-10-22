@@ -284,7 +284,7 @@ func resourceSecurityGroupCreate(d *schema.ResourceData, meta interface{}) error
 
 	// AWS defaults all Security Groups to have an ALLOW ALL egress rule. Here we
 	// revoke that rule, so users don't unknowingly have/use it.
-	if group.VpcId != nil && *group.VpcId != "" {
+	if group.VpcId != nil && aws.StringValue(group.VpcId) != "" {
 		log.Printf("[DEBUG] Revoking default egress rule for Security Group for %s", d.Id())
 
 		req := &ec2.RevokeSecurityGroupEgressInput{
@@ -649,7 +649,7 @@ func SecurityGroupIPPermGather(groupId string, permissions []*ec2.IpPermission, 
 
 				rule := initSecurityGroupRule(ruleMap, perm, desc)
 
-				if *g.GroupId == groupId {
+				if aws.StringValue(g.GroupId) == groupId {
 					rule["self"] = true
 					continue
 				}
@@ -732,7 +732,7 @@ func resourceSecurityGroupUpdateRules(
 						GroupId:       group.GroupId,
 						IpPermissions: remove,
 					}
-					if group.VpcId == nil || *group.VpcId == "" {
+					if group.VpcId == nil || aws.StringValue(group.VpcId) == "" {
 						req.GroupId = nil
 						req.GroupName = group.GroupName
 					}
@@ -759,7 +759,7 @@ func resourceSecurityGroupUpdateRules(
 						GroupId:       group.GroupId,
 						IpPermissions: add,
 					}
-					if group.VpcId == nil || *group.VpcId == "" {
+					if group.VpcId == nil || aws.StringValue(group.VpcId) == "" {
 						req.GroupId = nil
 						req.GroupName = group.GroupName
 					}
@@ -1417,10 +1417,10 @@ func deleteLingeringLambdaENIs(conn *ec2.EC2, filterName, resourceId string, tim
 func initSecurityGroupRule(ruleMap map[string]map[string]interface{}, perm *ec2.IpPermission, desc string) map[string]interface{} {
 	var fromPort, toPort int64
 	if v := perm.FromPort; v != nil {
-		fromPort = *v
+		fromPort = aws.Int64Value(v)
 	}
 	if v := perm.ToPort; v != nil {
-		toPort = *v
+		toPort = aws.Int64Value(v)
 	}
 	k := fmt.Sprintf("%s-%d-%d-%s", *perm.IpProtocol, fromPort, toPort, desc)
 	rule, ok := ruleMap[k]

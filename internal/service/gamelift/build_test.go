@@ -39,9 +39,9 @@ func TestAccGameLiftBuild_basic(t *testing.T) {
 	}
 
 	loc := g.Location
-	bucketName := *loc.Bucket
-	roleArn := *loc.RoleArn
-	key := *loc.Key
+	bucketName := aws.StringValue(loc.Bucket)
+	roleArn := aws.StringValue(loc.RoleArn)
+	key := aws.StringValue(loc.Key)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -104,9 +104,9 @@ func TestAccGameLiftBuild_tags(t *testing.T) {
 	}
 
 	loc := g.Location
-	bucketName := *loc.Bucket
-	roleArn := *loc.RoleArn
-	key := *loc.Key
+	bucketName := aws.StringValue(loc.Bucket)
+	roleArn := aws.StringValue(loc.RoleArn)
+	key := aws.StringValue(loc.Key)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -167,9 +167,9 @@ func TestAccGameLiftBuild_disappears(t *testing.T) {
 	}
 
 	loc := g.Location
-	bucketName := *loc.Bucket
-	roleArn := *loc.RoleArn
-	key := *loc.Key
+	bucketName := aws.StringValue(loc.Bucket)
+	roleArn := aws.StringValue(loc.RoleArn)
+	key := aws.StringValue(loc.Key)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {

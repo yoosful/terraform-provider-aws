@@ -136,7 +136,7 @@ func resourceAccountCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error creating account: %s", err)
 	}
 
-	requestId := *resp.CreateAccountStatus.Id
+	requestId := aws.StringValue(resp.CreateAccountStatus.Id)
 
 	// Wait for the account to become available
 	log.Printf("[DEBUG] Waiting for account request (%s) to succeed", requestId)
@@ -313,10 +313,10 @@ func resourceAccountStateRefreshFunc(conn *organizations.Organizations, id strin
 		}
 
 		accountStatus := resp.CreateAccountStatus
-		if *accountStatus.State == organizations.CreateAccountStateFailed {
-			return nil, *accountStatus.State, fmt.Errorf(*accountStatus.FailureReason)
+		if aws.StringValue(accountStatus.State) == organizations.CreateAccountStateFailed {
+			return nil, aws.StringValue(accountStatus.State), fmt.Errorf(aws.StringValue(accountStatus.FailureReason))
 		}
-		return accountStatus, *accountStatus.State, nil
+		return accountStatus, aws.StringValue(accountStatus.State), nil
 	}
 }
 

@@ -918,7 +918,7 @@ func resourceClusterStateRefreshFunc(id string, conn *redshift.Redshift) resourc
 		var rsc *redshift.Cluster
 
 		for _, c := range resp.Clusters {
-			if *c.ClusterIdentifier == id {
+			if aws.StringValue(c.ClusterIdentifier) == id {
 				rsc = c
 			}
 		}

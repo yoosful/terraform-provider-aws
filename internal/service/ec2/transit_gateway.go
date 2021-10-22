@@ -166,7 +166,7 @@ func resourceTransitGatewayRead(d *schema.ResourceData, meta interface{}) error 
 
 	transitGateway, err := DescribeTransitGateway(conn, d.Id())
 
-	if tfawserr.ErrMessageContains(err, "InvalidTransitGatewayID.NotFound", "") {
+	if tfawserr.ErrMessageContains(err, "InvalidTransitGatewayID.NotFound", "") && !d.IsNewResource() {
 		log.Printf("[WARN] EC2 Transit Gateway (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
@@ -176,13 +176,14 @@ func resourceTransitGatewayRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("error reading EC2 Transit Gateway: %s", err)
 	}
 
-	if transitGateway == nil {
+	if transitGateway == nil && !d.IsNewResource() {
 		log.Printf("[WARN] EC2 Transit Gateway (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
 	}
 
-	if aws.StringValue(transitGateway.State) == ec2.TransitGatewayStateDeleting || aws.StringValue(transitGateway.State) == ec2.TransitGatewayStateDeleted {
+	if (aws.StringValue(transitGateway.State) == ec2.TransitGatewayStateDeleting ||
+		aws.StringValue(transitGateway.State) == ec2.TransitGatewayStateDeleted) && !d.IsNewResource() {
 		log.Printf("[WARN] EC2 Transit Gateway (%s) in deleted state (%s), removing from state", d.Id(), aws.StringValue(transitGateway.State))
 		d.SetId("")
 		return nil

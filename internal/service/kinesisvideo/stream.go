@@ -152,7 +152,7 @@ func resourceStreamRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	resp, err := conn.DescribeStream(descOpts)
-	if tfawserr.ErrMessageContains(err, kinesisvideo.ErrCodeResourceNotFoundException, "") {
+	if tfawserr.ErrMessageContains(err, kinesisvideo.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 		log.Printf("[WARN] Kinesis Video Stream (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil
@@ -209,11 +209,6 @@ func resourceStreamUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if _, err := conn.UpdateStream(updateOpts); err != nil {
-		if tfawserr.ErrMessageContains(err, kinesisvideo.ErrCodeResourceNotFoundException, "") {
-			log.Printf("[WARN] Kinesis Video Stream (%s) not found, removing from state", d.Id())
-			d.SetId("")
-			return nil
-		}
 		return fmt.Errorf("Error updating Kinesis Video Stream (%s): %s", d.Id(), err)
 	}
 

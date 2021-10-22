@@ -130,7 +130,7 @@ func resourceLedgerRead(d *schema.ResourceData, meta interface{}) error {
 
 	qldbLedger, err := conn.DescribeLedger(input)
 
-	if tfawserr.ErrMessageContains(err, qldb.ErrCodeResourceNotFoundException, "") {
+	if tfawserr.ErrMessageContains(err, qldb.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 		log.Printf("[WARN] QLDB Ledger (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

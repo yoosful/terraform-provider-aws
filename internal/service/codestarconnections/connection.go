@@ -103,7 +103,7 @@ func resourceConnectionRead(d *schema.ResourceData, meta interface{}) error {
 	ignoreTagsConfig := meta.(*conns.AWSClient).IgnoreTagsConfig
 
 	connection, err := findConnectionByARN(conn, d.Id())
-	if tfawserr.ErrCodeEquals(err, codestarconnections.ErrCodeResourceNotFoundException) {
+	if tfawserr.ErrCodeEquals(err, codestarconnections.ErrCodeResourceNotFoundException) && !d.IsNewResource() {
 		log.Printf("[WARN] CodeStar connection (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

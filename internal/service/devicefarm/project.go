@@ -91,12 +91,12 @@ func resourceProjectRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Reading DeviceFarm Project: %s", d.Id())
 	out, err := conn.GetProject(input)
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, devicefarm.ErrCodeNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, devicefarm.ErrCodeNotFoundException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] DeviceFarm Project (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading DeviceFarm Project: %w", err)
+		return fmt.Errorf("Error reading DeviceFarm Project (%s): %w", d.Id(), err)
 	}
 
 	project := out.Project

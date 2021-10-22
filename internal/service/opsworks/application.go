@@ -326,7 +326,7 @@ func resourceApplicationCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error creating OpsWorks application: %s", err)
 	}
 
-	appID := *resp.AppId
+	appID := aws.StringValue(resp.AppId)
 	d.SetId(appID)
 
 	return resourceApplicationRead(d, meta)

@@ -1529,7 +1529,7 @@ func flattenEmrAutoScalingPolicyDescription(policy *emr.AutoScalingPolicyDescrip
 	// for the statefile.
 	for i, rule := range policy.Rules {
 		for j, dimension := range rule.Trigger.CloudWatchAlarmDefinition.Dimensions {
-			if *dimension.Key == "JobFlowId" {
+			if aws.StringValue(dimension.Key) == "JobFlowId" {
 				tmpDimensions := append(policy.Rules[i].Trigger.CloudWatchAlarmDefinition.Dimensions[:j], policy.Rules[i].Trigger.CloudWatchAlarmDefinition.Dimensions[j+1:]...)
 				policy.Rules[i].Trigger.CloudWatchAlarmDefinition.Dimensions = tmpDimensions
 			}
@@ -1979,7 +1979,7 @@ func resourceClusterStateRefreshFunc(d *schema.ResourceData, meta interface{}) r
 
 func findMasterGroup(instanceGroups []*emr.InstanceGroup) *emr.InstanceGroup {
 	for _, group := range instanceGroups {
-		if *group.InstanceGroupType == emr.InstanceRoleTypeMaster {
+		if aws.StringValue(group.InstanceGroupType) == emr.InstanceRoleTypeMaster {
 			return group
 		}
 	}

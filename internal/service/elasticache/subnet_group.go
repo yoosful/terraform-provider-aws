@@ -138,7 +138,7 @@ func resourceSubnetGroupRead(d *schema.ResourceData, meta interface{}) error {
 	var group *elasticache.CacheSubnetGroup
 	for _, g := range res.CacheSubnetGroups {
 		log.Printf("[DEBUG] %v %v", g.CacheSubnetGroupName, d.Id())
-		if *g.CacheSubnetGroupName == d.Id() {
+		if aws.StringValue(g.CacheSubnetGroupName) == d.Id() {
 			group = g
 		}
 	}
@@ -148,7 +148,7 @@ func resourceSubnetGroupRead(d *schema.ResourceData, meta interface{}) error {
 
 	ids := make([]string, len(group.Subnets))
 	for i, s := range group.Subnets {
-		ids[i] = *s.SubnetIdentifier
+		ids[i] = aws.StringValue(s.SubnetIdentifier)
 	}
 
 	d.Set("arn", group.ARN)

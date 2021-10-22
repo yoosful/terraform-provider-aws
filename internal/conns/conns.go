@@ -1657,9 +1657,9 @@ func GetSupportedEC2Platforms(conn *ec2.EC2) ([]string, error) {
 
 	var platforms []string
 	for _, attr := range attributes.AccountAttributes {
-		if *attr.AttributeName == attrName {
+		if aws.StringValue(attr.AttributeName) == attrName {
 			for _, v := range attr.AttributeValues {
-				platforms = append(platforms, *v.AttributeValue)
+				platforms = append(platforms, aws.StringValue(v.AttributeValue))
 			}
 			break
 		}

@@ -244,11 +244,11 @@ func dataSourceRoutesRead(ec2Routes []*ec2.Route) []map[string]interface{} {
 	routes := make([]map[string]interface{}, 0, len(ec2Routes))
 	// Loop through the routes and add them to the set
 	for _, r := range ec2Routes {
-		if r.GatewayId != nil && *r.GatewayId == "local" {
+		if r.GatewayId != nil && aws.StringValue(r.GatewayId) == "local" {
 			continue
 		}
 
-		if r.Origin != nil && *r.Origin == "EnableVgwRoutePropagation" {
+		if r.Origin != nil && aws.StringValue(r.Origin) == "EnableVgwRoutePropagation" {
 			continue
 		}
 

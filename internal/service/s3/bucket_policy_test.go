@@ -153,7 +153,7 @@ func testAccCheckBucketHasPolicy(n string, expectedPolicyText string) resource.T
 			return fmt.Errorf("GetBucketPolicy error: %v", err)
 		}
 
-		actualPolicyText := *policy.Policy
+		actualPolicyText := aws.StringValue(policy.Policy)
 
 		equivalent, err := awspolicy.PoliciesAreEquivalent(actualPolicyText, expectedPolicyText)
 		if err != nil {

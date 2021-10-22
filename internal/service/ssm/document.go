@@ -339,16 +339,16 @@ func resourceDocumentRead(d *schema.ResourceData, meta interface{}) error {
 		param := make(map[string]interface{})
 
 		if dp.DefaultValue != nil {
-			param["default_value"] = *dp.DefaultValue
+			param["default_value"] = aws.StringValue(dp.DefaultValue)
 		}
 		if dp.Description != nil {
-			param["description"] = *dp.Description
+			param["description"] = aws.StringValue(dp.Description)
 		}
 		if dp.Name != nil {
-			param["name"] = *dp.Name
+			param["name"] = aws.StringValue(dp.Name)
 		}
 		if dp.Type != nil {
-			param["type"] = *dp.Type
+			param["type"] = aws.StringValue(dp.Type)
 		}
 		params = append(params, param)
 	}
@@ -546,10 +546,7 @@ func getDocumentPermissions(d *schema.ResourceData, meta interface{}) (map[strin
 		return nil, fmt.Errorf("Error setting permissions for SSM document: %s", err)
 	}
 
-	var account_ids = make([]string, len(resp.AccountIds))
-	for i := 0; i < len(resp.AccountIds); i++ {
-		account_ids[i] = *resp.AccountIds[i]
-	}
+	account_ids := aws.StringValueSlice(resp.AccountIds)
 
 	ids := ""
 	if len(account_ids) == 1 {
@@ -691,7 +688,7 @@ func updateDocument(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error updating SSM document: %s", err)
 	} else {
 		log.Printf("[INFO] Updating the default version to the new version %s: %s", newDefaultVersion, d.Id())
-		newDefaultVersion = *updated.DocumentDescription.DocumentVersion
+		newDefaultVersion = aws.StringValue(updated.DocumentDescription.DocumentVersion)
 	}
 
 	updateDefaultInput := &ssm.UpdateDocumentDefaultVersionInput{

@@ -148,17 +148,6 @@ func resourceRuleRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	var predicates []map[string]interface{}
-
-	for _, predicateSet := range resp.Rule.Predicates {
-		predicate := map[string]interface{}{
-			"negated": *predicateSet.Negated,
-			"type":    *predicateSet.Type,
-			"data_id": *predicateSet.DataId,
-		}
-		predicates = append(predicates, predicate)
-	}
-
 	arn := arn.ARN{
 		Partition: meta.(*conns.AWSClient).Partition,
 		Service:   "waf",
@@ -184,7 +173,7 @@ func resourceRuleRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("error setting tags_all: %w", err)
 	}
 
-	d.Set("predicates", predicates)
+	d.Set("predicate", FlattenRulePredicates(resp.Rule.Predicates))
 	d.Set("name", resp.Rule.Name)
 	d.Set("metric_name", resp.Rule.MetricName)
 
@@ -275,7 +264,7 @@ func updateWafRuleResource(id string, oldP, newP []interface{}, conn *waf.WAF) e
 		req := &waf.UpdateRuleInput{
 			ChangeToken: token,
 			RuleId:      aws.String(id),
-			Updates:     diffWafRulePredicates(oldP, newP),
+			Updates:     DiffRulePredicates(oldP, newP),
 		}
 
 		return conn.UpdateRule(req)

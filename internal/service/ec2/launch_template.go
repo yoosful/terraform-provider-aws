@@ -730,7 +730,7 @@ func resourceLaunchTemplateRead(d *schema.ResourceData, meta interface{}) error 
 		return nil
 	}
 
-	if *dlt.LaunchTemplates[0].LaunchTemplateId != d.Id() {
+	if aws.StringValue(dlt.LaunchTemplates[0].LaunchTemplateId) != d.Id() {
 		return fmt.Errorf("Unable to find launch template: %#v", dlt.LaunchTemplates)
 	}
 

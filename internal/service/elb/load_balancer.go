@@ -395,7 +395,7 @@ func flattenLoadBalancerEResource(d *schema.ResourceData, ec2conn *ec2.EC2, elbc
 
 	var scheme bool
 	if lb.Scheme != nil {
-		scheme = *lb.Scheme == "internal"
+		scheme = aws.StringValue(lb.Scheme) == "internal"
 	}
 	d.Set("internal", scheme)
 	d.Set("availability_zones", flex.FlattenStringList(lb.AvailabilityZones))
@@ -405,7 +405,7 @@ func flattenLoadBalancerEResource(d *schema.ResourceData, ec2conn *ec2.EC2, elbc
 
 	if lb.SourceSecurityGroup != nil {
 		group := lb.SourceSecurityGroup.GroupName
-		if lb.SourceSecurityGroup.OwnerAlias != nil && *lb.SourceSecurityGroup.OwnerAlias != "" {
+		if lb.SourceSecurityGroup.OwnerAlias != nil && aws.StringValue(lb.SourceSecurityGroup.OwnerAlias) != "" {
 			group = aws.String(*lb.SourceSecurityGroup.OwnerAlias + "/" + *lb.SourceSecurityGroup.GroupName)
 		}
 		d.Set("source_security_group", group)
@@ -471,7 +471,7 @@ func flattenLoadBalancerEResource(d *schema.ResourceData, ec2conn *ec2.EC2, elbc
 
 	// There's only one health check, so save that to state as we
 	// currently can
-	if *lb.HealthCheck.Target != "" {
+	if aws.StringValue(lb.HealthCheck.Target) != "" {
 		d.Set("health_check", FlattenHealthCheck(lb.HealthCheck))
 	}
 

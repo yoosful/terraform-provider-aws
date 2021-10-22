@@ -139,7 +139,7 @@ func resourceUserSSHKeyRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("error reading IAM User SSH Key (%s): empty response", d.Id())
 	}
 
-	publicKey := *getResp.SSHPublicKey.SSHPublicKeyBody
+	publicKey := aws.StringValue(getResp.SSHPublicKey.SSHPublicKeyBody)
 	if encoding == "SSH" {
 		publicKey = cleanSSHKey(publicKey)
 	}

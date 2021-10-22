@@ -1650,7 +1650,7 @@ func resourceInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 		req.StorageType = aws.String(d.Get("storage_type").(string))
 		requestUpdate = true
 
-		if *req.StorageType == "io1" {
+		if aws.StringValue(req.StorageType) == "io1" {
 			req.Iops = aws.Int64(int64(d.Get("iops").(int)))
 		}
 	}

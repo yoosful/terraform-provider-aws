@@ -510,7 +510,7 @@ func testAccCheckUserPermissionsBoundary(getUserOutput *iam.GetUserOutput, expec
 		actualPermissionsBoundaryArn := ""
 
 		if getUserOutput.User.PermissionsBoundary != nil {
-			actualPermissionsBoundaryArn = *getUserOutput.User.PermissionsBoundary.PermissionsBoundaryArn
+			actualPermissionsBoundaryArn = aws.StringValue(getUserOutput.User.PermissionsBoundary.PermissionsBoundaryArn)
 		}
 
 		if actualPermissionsBoundaryArn != expectedPermissionsBoundaryArn {

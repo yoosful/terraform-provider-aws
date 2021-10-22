@@ -373,10 +373,10 @@ func flattenAssociationOutoutLocation(location *ssm.InstanceAssociationOutputLoc
 	result := make([]map[string]interface{}, 0)
 	item := make(map[string]interface{})
 
-	item["s3_bucket_name"] = *location.S3Location.OutputS3BucketName
+	item["s3_bucket_name"] = aws.StringValue(location.S3Location.OutputS3BucketName)
 
 	if location.S3Location.OutputS3KeyPrefix != nil {
-		item["s3_key_prefix"] = *location.S3Location.OutputS3KeyPrefix
+		item["s3_key_prefix"] = aws.StringValue(location.S3Location.OutputS3KeyPrefix)
 	}
 
 	result = append(result, item)

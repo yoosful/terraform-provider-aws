@@ -89,7 +89,7 @@ func resourceBucketPolicyRead(d *schema.ResourceData, meta interface{}) error {
 
 	v := ""
 	if err == nil && pol.Policy != nil {
-		v = *pol.Policy
+		v = aws.StringValue(pol.Policy)
 	}
 	if err := d.Set("policy", v); err != nil {
 		return err

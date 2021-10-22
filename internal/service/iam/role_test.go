@@ -874,7 +874,7 @@ func testAccCheckRolePermissionsBoundary(role *iam.Role, expectedPermissionsBoun
 		actualPermissionsBoundaryArn := ""
 
 		if role.PermissionsBoundary != nil {
-			actualPermissionsBoundaryArn = *role.PermissionsBoundary.PermissionsBoundaryArn
+			actualPermissionsBoundaryArn = aws.StringValue(role.PermissionsBoundary.PermissionsBoundaryArn)
 		}
 
 		if actualPermissionsBoundaryArn != expectedPermissionsBoundaryArn {
@@ -897,7 +897,7 @@ func testAccCheckRolePolicyDetachManagedPolicy(role *iam.Role, policyName string
 		err := conn.ListAttachedRolePoliciesPages(input, func(page *iam.ListAttachedRolePoliciesOutput, lastPage bool) bool {
 			for _, v := range page.AttachedPolicies {
 				if *v.PolicyName == policyName {
-					managedARN = *v.PolicyArn
+					managedARN = aws.StringValue(v.PolicyArn)
 					break
 				}
 			}
@@ -937,7 +937,7 @@ func testAccCheckRolePolicyAttachManagedPolicy(role *iam.Role, policyName string
 		err := conn.ListPoliciesPages(input, func(page *iam.ListPoliciesOutput, lastPage bool) bool {
 			for _, v := range page.Policies {
 				if *v.PolicyName == policyName {
-					managedARN = *v.Arn
+					managedARN = aws.StringValue(v.Arn)
 					break
 				}
 			}

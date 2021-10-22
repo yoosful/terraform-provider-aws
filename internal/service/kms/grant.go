@@ -197,7 +197,7 @@ func resourceGrantRead(d *schema.ResourceData, meta interface{}) error {
 	grant, err := findKmsGrantByIdWithRetry(conn, keyId, grantId)
 
 	if err != nil {
-		if tfresource.NotFound(err) {
+		if tfresource.NotFound(err) && !d.IsNewResource() {
 			log.Printf("[WARN] KMS Grant (%s) not found for Key (%s), removing from state file", grantId, keyId)
 			d.SetId("")
 			return nil
@@ -205,7 +205,7 @@ func resourceGrantRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if grant == nil {
+	if grant == nil && !d.IsNewResource() {
 		log.Printf("[WARN] KMS Grant (%s) not found for Key (%s), removing from state file", grantId, keyId)
 		d.SetId("")
 		return nil
@@ -289,7 +289,7 @@ func resourceGrantDelete(d *schema.ResourceData, meta interface{}) error {
 
 func getKmsGrantById(grants []*kms.GrantListEntry, grantIdentifier string) *kms.GrantListEntry {
 	for _, grant := range grants {
-		if *grant.GrantId == grantIdentifier {
+		if aws.StringValue(grant.GrantId) == grantIdentifier {
 			return grant
 		}
 	}

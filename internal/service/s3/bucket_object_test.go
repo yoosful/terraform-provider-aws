@@ -1476,7 +1476,7 @@ func testAccCheckBucketObjectStorageClass(n, expectedClass string) resource.Test
 		// class when set would not be included in the results.
 		storageClass := s3.StorageClassStandard
 		if out.StorageClass != nil {
-			storageClass = *out.StorageClass
+			storageClass = aws.StringValue(out.StorageClass)
 		}
 
 		if storageClass != expectedClass {
@@ -1506,7 +1506,7 @@ func testAccCheckBucketObjectSSE(n, expectedSSE string) resource.TestCheckFunc {
 			return fmt.Errorf("Expected a non %v Server Side Encryption.", out.ServerSideEncryption)
 		}
 
-		sse := *out.ServerSideEncryption
+		sse := aws.StringValue(out.ServerSideEncryption)
 		if sse != expectedSSE {
 			return fmt.Errorf("Expected Server Side Encryption %v, got %v.",
 				expectedSSE, sse)

@@ -828,8 +828,8 @@ func resourceFunctionRead(d *schema.ResourceData, meta interface{}) error {
 		}, func(p *lambda.ListVersionsByFunctionOutput, lastPage bool) bool {
 			if lastPage {
 				last := p.Versions[len(p.Versions)-1]
-				lastVersion = *last.Version
-				lastQualifiedArn = *last.FunctionArn
+				lastVersion = aws.StringValue(last.Version)
+				lastQualifiedArn = aws.StringValue(last.FunctionArn)
 				return false
 			}
 			return true

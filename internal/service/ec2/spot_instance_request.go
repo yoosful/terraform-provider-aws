@@ -430,14 +430,14 @@ func readInstance(d *schema.ResourceData, meta interface{}) error {
 	var ipv6Addresses []string
 	if len(instance.NetworkInterfaces) > 0 {
 		for _, ni := range instance.NetworkInterfaces {
-			if *ni.Attachment.DeviceIndex == 0 {
+			if aws.Int64Value(ni.Attachment.DeviceIndex) == 0 {
 				d.Set("subnet_id", ni.SubnetId)
 				d.Set("primary_network_interface_id", ni.NetworkInterfaceId)
 				d.Set("associate_public_ip_address", ni.Association != nil)
 				d.Set("ipv6_address_count", len(ni.Ipv6Addresses))
 
 				for _, address := range ni.Ipv6Addresses {
-					ipv6Addresses = append(ipv6Addresses, *address.Ipv6Address)
+					ipv6Addresses = append(ipv6Addresses, aws.StringValue(address.Ipv6Address))
 				}
 			}
 		}

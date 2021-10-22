@@ -150,7 +150,7 @@ func resourceSamplingRuleRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("error reading XRay Sampling Rule (%s): %w", d.Id(), err)
 	}
 
-	if samplingRule == nil {
+	if samplingRule == nil && !d.IsNewResource() {
 		log.Printf("[WARN] XRay Sampling Rule (%s) not found, removing from state", d.Id())
 		d.SetId("")
 		return nil

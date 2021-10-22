@@ -185,7 +185,7 @@ func resourcePolicyRead(d *schema.ResourceData, meta interface{}) error {
 	resp, err := conn.GetPolicy(req)
 
 	if err != nil {
-		if tfawserr.ErrMessageContains(err, fms.ErrCodeResourceNotFoundException, "") {
+		if tfawserr.ErrMessageContains(err, fms.ErrCodeResourceNotFoundException, "") && !d.IsNewResource() {
 			log.Printf("[WARN] FMS Policy (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
