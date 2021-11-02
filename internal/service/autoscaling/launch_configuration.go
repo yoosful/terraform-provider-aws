@@ -746,10 +746,7 @@ func readBlockDevicesFromLaunchConfiguration(d *schema.ResourceData, lc *autosca
 	if err != nil {
 		return nil, err
 	}
-	rootDeviceName := ""
-	if v != nil {
-		rootDeviceName = aws.StringValue(v)
-	}
+	rootDeviceName := aws.StringValue(v)
 
 	// Collect existing configured devices, so we can check
 	// existing value of delete_on_termination below
