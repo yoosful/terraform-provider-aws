@@ -489,8 +489,8 @@ resource "aws_worklink_fleet" "test" {
 
   identity_provider {
     type          = "SAML"
-	saml_metadata = templatefile("./test-fixtures/saml-metadata.xml.tpl", { entity_id = %[2]q })
-}
+    saml_metadata = templatefile("./test-fixtures/saml-metadata.xml.tpl", { entity_id = %[2]q })
+  }
 }
 `, rName, idpEntityId)
 }
