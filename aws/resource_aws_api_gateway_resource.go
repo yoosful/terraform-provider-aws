@@ -90,7 +90,7 @@ func resourceAwsApiGatewayResourceRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Resource (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Resource (%s): %w", d.Id(), err)
 	}
 
 	d.Set("parent_id", resource.ParentId)

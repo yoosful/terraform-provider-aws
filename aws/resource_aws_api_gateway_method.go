@@ -175,7 +175,7 @@ func resourceAwsApiGatewayMethodRead(d *schema.ResourceData, meta interface{}) e
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Method (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Method (%s): %w", d.Id(), err)
 	}
 	log.Printf("[DEBUG] Received API Gateway Method: %s", out)
 

@@ -261,7 +261,7 @@ func resourceAwsApiGatewayIntegrationRead(d *schema.ResourceData, meta interface
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Integration (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Integration (%s): %w", d.Id(), err)
 	}
 	log.Printf("[DEBUG] Received API Gateway Integration: %s", integration)
 

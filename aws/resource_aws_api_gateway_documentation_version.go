@@ -84,7 +84,7 @@ func resourceAwsApiGatewayDocumentationVersionRead(d *schema.ResourceData, meta 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Documentation Version (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Documentation Version (%s): %w", d.Id(), err)
 	}
 
 	d.Set("rest_api_id", apiId)

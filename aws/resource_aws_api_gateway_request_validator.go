@@ -92,7 +92,7 @@ func resourceAwsApiGatewayRequestValidatorRead(d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Request Validator (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Request Validator (%s): %w", d.Id(), err)
 	}
 
 	d.Set("name", out.Name)

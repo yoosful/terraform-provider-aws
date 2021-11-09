@@ -119,7 +119,7 @@ func resourceAwsApiGatewayGatewayResponseRead(d *schema.ResourceData, meta inter
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading API Gateway Response (%s): %s", d.Id(), err)
+		return fmt.Errorf("error reading API Gateway Response (%s): %w", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Received API Gateway Gateway Response: %s", gatewayResponse)
